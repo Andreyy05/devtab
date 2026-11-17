@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import SearchBar from './components/SearchBar';
 import BookmarkGrid from './components/BookmarkGrid';
+import GitHubWidget from './components/GitHubWidget';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { ACCENT_THEMES, DEFAULT_BOOKMARKS } from './constants/defaults';
 
 export default function App() {
   const [userName, setUserName] = useLocalStorage('devtab_username', 'Andrej');
+  const [githubUser, setGithubUser] = useLocalStorage('devtab_gh_user', 'Andreyy05');
   const [is24h, setIs24h] = useLocalStorage('devtab_is24h', true);
   const [themeId, setThemeId] = useLocalStorage('devtab_theme', 'emerald');
   const [searchEngineId, setSearchEngineId] = useLocalStorage('devtab_engine', 'google');
@@ -52,6 +54,13 @@ export default function App() {
           onDeleteBookmark={handleDeleteBookmark}
           accentTheme={accentTheme}
         />
+
+        <section className="w-full max-w-7xl mx-auto my-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <GitHubWidget
+            username={githubUser}
+            accentTheme={accentTheme}
+          />
+        </section>
       </main>
 
       <footer className="w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 border-t border-neutral-900 gap-2">
