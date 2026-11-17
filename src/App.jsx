@@ -5,6 +5,8 @@ import BookmarkGrid from './components/BookmarkGrid';
 import GitHubWidget from './components/GitHubWidget';
 import ScratchpadWidget from './components/ScratchpadWidget';
 import DevQuote from './components/DevQuote';
+import SettingsModal from './components/SettingsModal';
+import ShortcutsModal from './components/ShortcutsModal';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { ACCENT_THEMES, DEFAULT_BOOKMARKS } from './constants/defaults';
 
@@ -16,7 +18,27 @@ export default function App() {
   const [searchEngineId, setSearchEngineId] = useLocalStorage('devtab_engine', 'google');
   const [bookmarks, setBookmarks] = useLocalStorage('devtab_bookmarks', DEFAULT_BOOKMARKS);
 
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+
   const accentTheme = ACCENT_THEMES[themeId] || ACCENT_THEMES.emerald;
+
+  // Global hotkeys
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+      if (e.key === '?') {
+        e.preventDefault();
+        setIsShortcutsOpen((prev) => !prev);
+      } else if (e.key.toLowerCase() === 's') {
+        e.preventDefault();
+        setIsSettingsOpen((prev) => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   const handleSaveBookmark = (bookmark) => {
     setBookmarks((prev) => {
@@ -37,8 +59,8 @@ export default function App() {
       <Header
         userName={userName}
         is24h={is24h}
-        onOpenSettings={() => console.log('open settings')}
-        onOpenShortcuts={() => console.log('open shortcuts')}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenShortcuts={() => setIsShortcutsOpen(true)}
         accentTheme={accentTheme}
       />
 
@@ -85,8 +107,32 @@ export default function App() {
         </div>
         <div className="flex items-center gap-4">
           <span>Press <kbd className="px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300 font-mono text-[10px]">?</kbd> for shortcuts</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300 font-mono text-[10px]">S</kbd> for settings</span>
         </div>
       </footer>
+
+      {/* Modals */}
+      <SettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        userName={userName}
+        setUserName={setUserName}
+        githubUser={githubUser}
+        setGithubUser={setGithubUser}
+        is24h={is24h}
+        setIs24h={setIs24h}
+        themeId={themeId}
+        setThemeId={setThemeId}
+        searchEngineId={searchEngineId}
+        setSearchEngineId={setSearchEngineId}
+        bookmarks={bookmarks}
+        setBookmarks={setBookmarks}
+      />
+
+      <ShortcutsModal
+        isOpen={isShortcutsOpen}
+        onClose={() => setIsShortcutsOpen(false)}
+      />
     </div>
   );
 }
