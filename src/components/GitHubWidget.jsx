@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { RefreshCw, Flame, GitCommit, GitFork, ExternalLink, Calendar, CheckCircle2, AlertCircle } from 'lucide-react';
+import { RefreshCw, ExternalLink } from 'lucide-react';
 import { GithubIcon } from './Icons';
 
 export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
@@ -7,13 +7,11 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
   const [userData, setUserData] = useState(null);
   const [stats, setStats] = useState(null);
   const [error, setError] = useState(null);
-  const [lastSynced, setLastSynced] = useState(null);
 
   const calculateStats = (events) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
-    // Group pushes by day for last 14 days
     const daysMap = {};
     for (let i = 13; i >= 0; i--) {
       const d = new Date(today);
@@ -49,27 +47,20 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
       }
     });
 
-    // Calculate current streak
+    // Calculate streak
     let streak = 0;
     const sortedDays = Object.values(daysMap).sort((a, b) => b.date.localeCompare(a.date));
     
-    // Check if committed today or yesterday to start streak
-    let activeStreak = false;
     for (const d of sortedDays) {
       if (d.commits > 0) {
         streak++;
-        activeStreak = true;
       } else {
-        // If today has 0 commits, streak isn't broken yet if yesterday had commits
         const isCurrentDay = d.date === today.toISOString().split('T')[0];
-        if (isCurrentDay) {
-          continue;
-        }
+        if (isCurrentDay) continue;
         break;
       }
     }
 
-    // Top repo
     let topRepo = null;
     let maxRepoCommits = 0;
     for (const [r, count] of Object.entries(repoCounts)) {
@@ -98,16 +89,12 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
       try {
         const parsed = JSON.parse(cached);
         const age = Date.now() - parsed.timestamp;
-        // Use cache if under 5 minutes
         if (age < 5 * 60 * 1000) {
           setUserData(parsed.user);
           setStats(parsed.stats);
-          setLastSynced(new Date(parsed.timestamp));
           return;
         }
-      } catch (e) {
-        console.error('Failed to parse cached GitHub data', e);
-      }
+      } catch (e) {}
     }
 
     setLoading(true);
@@ -119,7 +106,7 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
         fetch(`https://api.github.com/users/${username}/events/public?per_page=100`),
       ]);
 
-      if (!userRes.ok) throw new Error(`User not found (${userRes.status})`);
+      if (!userRes.ok) throw new Error(`User not found`);
       const user = await userRes.json();
 
       let events = [];
@@ -128,22 +115,18 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
       }
 
       const calculated = calculateStats(events);
-
       setUserData(user);
       setStats(calculated);
-      const now = new Date();
-      setLastSynced(now);
 
       localStorage.setItem(
         cacheKey,
         JSON.stringify({
           user,
           stats: calculated,
-          timestamp: now.getTime(),
+          timestamp: Date.now(),
         })
       );
     } catch (err) {
-      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -155,15 +138,12 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
   }, [fetchGitHubData]);
 
   return (
-    <div className="w-full bg-neutral-900/60 border border-neutral-800/80 rounded-2xl p-4 sm:p-5 backdrop-blur-xl relative overflow-hidden shadow-xl">
-      {/* Background Accent glow */}
-      <div className="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none -mr-16 -mt-16" />
-
+    <div className="w-full bg-white/[0.04] border border-white/[0.08] rounded-3xl p-5 backdrop-blur-2xl shadow-xl flex flex-col justify-between">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3.5 border-b border-neutral-800/60">
+      <div className="flex items-center justify-between pb-3.5 border-b border-white/[0.06]">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-neutral-800 border border-neutral-700/60 flex items-center justify-center shrink-0">
-            <GithubIcon className="w-5 h-5 text-neutral-200" />
+          <div className="w-8 h-8 rounded-full bg-white/[0.08] flex items-center justify-center shrink-0">
+            <GithubIcon className="w-4 h-4 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -171,19 +151,17 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
                 href={`https://github.com/${username}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-sm font-bold text-white hover:text-emerald-400 transition-colors flex items-center gap-1"
+                className="text-xs font-semibold text-white hover:underline flex items-center gap-1"
               >
                 @{username}
-                <ExternalLink className="w-3 h-3 text-neutral-500" />
+                <ExternalLink className="w-2.5 h-2.5 text-neutral-400" />
               </a>
               {stats?.todayCommits > 0 && (
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Active Today
-                </span>
+                <span className="w-2 h-2 rounded-full bg-[#30d158] inline-block" title="Pushed today" />
               )}
             </div>
-            <p className="text-[11px] text-neutral-400">
-              {userData?.bio || `${userData?.public_repos || 0} public repositories`}
+            <p className="text-[11px] text-neutral-400 font-normal">
+              {userData?.public_repos || 0} repositories
             </p>
           </div>
         </div>
@@ -191,78 +169,53 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
         <button
           onClick={() => fetchGitHubData(true)}
           disabled={loading}
-          className="p-2 rounded-xl bg-neutral-800/80 hover:bg-neutral-700 text-neutral-400 hover:text-white transition-colors disabled:opacity-50"
-          title="Refresh GitHub stats"
+          className="w-7 h-7 rounded-full bg-white/[0.05] hover:bg-white/[0.1] text-neutral-400 hover:text-white flex items-center justify-center transition-colors disabled:opacity-50"
+          title="Refresh"
         >
-          <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-emerald-400' : ''}`} />
+          <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin text-white' : ''}`} />
         </button>
       </div>
 
-      {/* Streak & Today's Metric Highlights */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 my-4">
-        {/* Streak */}
-        <div className="bg-neutral-950/60 border border-neutral-800/60 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-400 shrink-0">
-            <Flame className="w-5 h-5" />
+      {/* Metrics in Apple Card Style */}
+      <div className="grid grid-cols-3 gap-2.5 my-3.5">
+        <div className="bg-white/[0.03] border border-white/[0.04] rounded-2xl p-3 text-center">
+          <div className="text-xl font-medium tracking-tight text-white">
+            {stats ? `${stats.streak}d` : '—'}
           </div>
-          <div>
-            <div className="text-lg font-extrabold text-white font-mono leading-none">
-              {stats ? `${stats.streak}d` : '...'}
-            </div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">
-              Current Streak
-            </span>
-          </div>
+          <span className="text-[10px] text-neutral-400 font-medium">Streak</span>
         </div>
 
-        {/* Commits Today */}
-        <div className="bg-neutral-950/60 border border-neutral-800/60 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0">
-            <GitCommit className="w-5 h-5" />
+        <div className="bg-white/[0.03] border border-white/[0.04] rounded-2xl p-3 text-center">
+          <div className="text-xl font-medium tracking-tight text-white">
+            {stats ? stats.todayCommits : '—'}
           </div>
-          <div>
-            <div className="text-lg font-extrabold text-white font-mono leading-none">
-              {stats ? stats.todayCommits : '...'}
-            </div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">
-              Pushed Today
-            </span>
-          </div>
+          <span className="text-[10px] text-neutral-400 font-medium">Today</span>
         </div>
 
-        {/* Total 14d Output */}
-        <div className="col-span-2 sm:col-span-1 bg-neutral-950/60 border border-neutral-800/60 rounded-xl p-3 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shrink-0">
-            <Calendar className="w-5 h-5" />
+        <div className="bg-white/[0.03] border border-white/[0.04] rounded-2xl p-3 text-center">
+          <div className="text-xl font-medium tracking-tight text-white">
+            {stats ? stats.totalCommits : '—'}
           </div>
-          <div>
-            <div className="text-lg font-extrabold text-white font-mono leading-none">
-              {stats ? stats.totalCommits : '...'}
-            </div>
-            <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400">
-              Last 14 Days
-            </span>
-          </div>
+          <span className="text-[10px] text-neutral-400 font-medium">14 Days</span>
         </div>
       </div>
 
-      {/* 14-Day Activity Sparkline Blocks */}
+      {/* 14-day Apple Activity Rhythm dots */}
       {stats?.days && (
-        <div className="bg-neutral-950/40 border border-neutral-800/50 rounded-xl p-3">
-          <div className="flex items-center justify-between text-[11px] text-neutral-400 mb-2 font-medium">
-            <span>14-Day Activity Rhythm</span>
-            <span>{stats.totalCommits} commits total</span>
+        <div className="bg-white/[0.02] border border-white/[0.04] rounded-2xl p-3">
+          <div className="flex items-center justify-between text-[10px] text-neutral-400 mb-2 font-medium">
+            <span>Activity</span>
+            <span>{stats.totalCommits} contributions</span>
           </div>
           <div
-            className="gap-1.5 sm:gap-2"
+            className="gap-1 sm:gap-1.5"
             style={{ display: 'grid', gridTemplateColumns: 'repeat(14, minmax(0, 1fr))' }}
           >
             {stats.days.map((d, idx) => {
               const isToday = idx === stats.days.length - 1;
-              let bg = 'bg-neutral-800/60';
-              if (d.commits > 0) bg = 'bg-emerald-900/60 border border-emerald-700/60';
-              if (d.commits >= 3) bg = 'bg-emerald-600 border border-emerald-500';
-              if (d.commits >= 6) bg = 'bg-emerald-400 text-black shadow-sm shadow-emerald-500/50';
+              let bg = 'bg-white/[0.08]';
+              if (d.commits > 0) bg = 'bg-[#30d158]/50';
+              if (d.commits >= 3) bg = 'bg-[#30d158]';
 
               return (
                 <div
@@ -271,11 +224,11 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
                   title={`${d.date}: ${d.commits} commits`}
                 >
                   <div
-                    className={`w-full aspect-square rounded-md transition-transform group-hover:scale-110 ${bg} ${
-                      isToday ? 'ring-2 ring-emerald-400/50' : ''
+                    className={`w-full aspect-square rounded-md transition-all ${bg} ${
+                      isToday ? 'ring-1.5 ring-white' : ''
                     }`}
                   />
-                  <span className="text-[9px] font-mono text-neutral-400 font-semibold">
+                  <span className="text-[8px] text-neutral-400 font-medium">
                     {d.dayName}
                   </span>
                 </div>
@@ -285,30 +238,11 @@ export default function GitHubWidget({ username = 'Andreyy05', accentTheme }) {
         </div>
       )}
 
-      {/* Footer Info / Top Active Repo */}
+      {/* Top repo */}
       {stats?.topRepo && (
-        <div className="mt-3 flex items-center justify-between text-[11px] text-neutral-400 px-1">
-          <div className="flex items-center gap-1.5 truncate">
-            <span className="text-neutral-400">Top repo:</span>
-            <a
-              href={`https://github.com/${stats.topRepo.name}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-neutral-200 hover:text-emerald-400 font-mono font-medium truncate"
-            >
-              {stats.topRepo.name}
-            </a>
-          </div>
-          <span className="text-emerald-400/90 font-mono text-[10px] shrink-0 font-medium">
-            {stats.topRepo.commits} commits
-          </span>
-        </div>
-      )}
-
-      {error && (
-        <div className="mt-3 text-xs text-rose-400/90 flex items-center gap-1.5 bg-rose-950/20 border border-rose-900/30 p-2 rounded-xl">
-          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-          <span>{error}</span>
+        <div className="mt-2.5 flex items-center justify-between text-[11px] text-neutral-400 px-1">
+          <span className="truncate">Top: <strong className="text-white/80 font-normal">{stats.topRepo.name}</strong></span>
+          <span className="text-neutral-400 shrink-0 text-[10px]">{stats.topRepo.commits} commits</span>
         </div>
       )}
     </div>
