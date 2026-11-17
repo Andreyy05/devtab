@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
+import SearchBar from './components/SearchBar';
 import { useLocalStorage } from './hooks/useLocalStorage';
-import { ACCENT_THEMES } from './constants/defaults';
+import { ACCENT_THEMES, DEFAULT_BOOKMARKS } from './constants/defaults';
 
 export default function App() {
   const [userName, setUserName] = useLocalStorage('devtab_username', 'Andrej');
   const [is24h, setIs24h] = useLocalStorage('devtab_is24h', true);
   const [themeId, setThemeId] = useLocalStorage('devtab_theme', 'emerald');
+  const [searchEngineId, setSearchEngineId] = useLocalStorage('devtab_engine', 'google');
+  const [bookmarks, setBookmarks] = useLocalStorage('devtab_bookmarks', DEFAULT_BOOKMARKS);
 
   const accentTheme = ACCENT_THEMES[themeId] || ACCENT_THEMES.emerald;
 
@@ -20,8 +23,13 @@ export default function App() {
         accentTheme={accentTheme}
       />
 
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex-1 flex flex-col items-center justify-center py-6 text-center text-neutral-400">
-        <p>DevTab Startpage ready.</p>
+      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex-1 flex flex-col items-center py-2">
+        <SearchBar
+          activeEngineId={searchEngineId}
+          onSelectEngine={setSearchEngineId}
+          bookmarks={bookmarks}
+          accentTheme={accentTheme}
+        />
       </main>
 
       <footer className="w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 border-t border-neutral-900 gap-2">
