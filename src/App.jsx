@@ -4,7 +4,6 @@ import SearchBar from './components/SearchBar';
 import BookmarkGrid from './components/BookmarkGrid';
 import GitHubWidget from './components/GitHubWidget';
 import ScratchpadWidget from './components/ScratchpadWidget';
-import DevQuote from './components/DevQuote';
 import SettingsModal from './components/SettingsModal';
 import ShortcutsModal from './components/ShortcutsModal';
 import { useLocalStorage } from './hooks/useLocalStorage';
@@ -14,24 +13,24 @@ export default function App() {
   const [userName, setUserName] = useLocalStorage('devtab_username', 'Andrej');
   const [githubUser, setGithubUser] = useLocalStorage('devtab_gh_user', 'Andreyy05');
   const [is24h, setIs24h] = useLocalStorage('devtab_is24h', true);
-  const [themeId, setThemeId] = useLocalStorage('devtab_theme', 'emerald');
+  const [themeId, setThemeId] = useLocalStorage('devtab_theme', 'blue');
   const [searchEngineId, setSearchEngineId] = useLocalStorage('devtab_engine', 'google');
   const [bookmarks, setBookmarks] = useLocalStorage('devtab_bookmarks', DEFAULT_BOOKMARKS);
 
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
 
-  const accentTheme = ACCENT_THEMES[themeId] || ACCENT_THEMES.emerald;
+  const accentTheme = ACCENT_THEMES[themeId] || ACCENT_THEMES.blue;
 
   // Global hotkeys
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
 
-      if (e.key === '?') {
+      if (e.key === '?' || ((e.metaKey || e.ctrlKey) && e.key === '/')) {
         e.preventDefault();
         setIsShortcutsOpen((prev) => !prev);
-      } else if (e.key.toLowerCase() === 's') {
+      } else if (e.key.toLowerCase() === 's' && !e.metaKey && !e.ctrlKey) {
         e.preventDefault();
         setIsSettingsOpen((prev) => !prev);
       }
@@ -55,59 +54,62 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between selection:bg-emerald-500/30">
-      <Header
-        userName={userName}
-        is24h={is24h}
-        onOpenSettings={() => setIsSettingsOpen(true)}
-        onOpenShortcuts={() => setIsShortcutsOpen(true)}
-        accentTheme={accentTheme}
-      />
-
-      <main className="w-full max-w-7xl mx-auto px-4 sm:px-6 flex-1 flex flex-col items-center py-2">
-        <SearchBar
-          activeEngineId={searchEngineId}
-          onSelectEngine={setSearchEngineId}
-          bookmarks={bookmarks}
+    <div className="min-h-screen flex flex-col justify-between selection:bg-white/20 selection:text-white pb-6">
+      <div>
+        <Header
+          userName={userName}
+          is24h={is24h}
+          onOpenSettings={() => setIsSettingsOpen(true)}
+          onOpenShortcuts={() => setIsShortcutsOpen(true)}
           accentTheme={accentTheme}
         />
 
-        <BookmarkGrid
-          bookmarks={bookmarks}
-          onSaveBookmark={handleSaveBookmark}
-          onDeleteBookmark={handleDeleteBookmark}
-          accentTheme={accentTheme}
-        />
-
-        {/* 2-Column Split: GitHub Activity + Scratchpad/Todos */}
-        <section className="w-full max-w-7xl mx-auto my-2 grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <GitHubWidget
-            username={githubUser}
+        <main className="w-full flex flex-col items-center">
+          <SearchBar
+            activeEngineId={searchEngineId}
+            onSelectEngine={setSearchEngineId}
+            bookmarks={bookmarks}
             accentTheme={accentTheme}
           />
-          <ScratchpadWidget
+
+          <BookmarkGrid
+            bookmarks={bookmarks}
+            onSaveBookmark={handleSaveBookmark}
+            onDeleteBookmark={handleDeleteBookmark}
             accentTheme={accentTheme}
           />
-        </section>
 
-        <DevQuote />
-      </main>
+          {/* Cupertino Widgets Grid */}
+          <section className="w-full max-w-6xl mx-auto my-3 px-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+            <GitHubWidget
+              username={githubUser}
+              accentTheme={accentTheme}
+            />
+            <ScratchpadWidget
+              accentTheme={accentTheme}
+            />
+          </section>
+        </main>
+      </div>
 
-      <footer className="w-full max-w-7xl mx-auto py-6 px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between text-xs text-neutral-500 border-t border-neutral-900 gap-2">
+      {/* Minimal Footer */}
+      <footer className="w-full max-w-6xl mx-auto px-6 pt-6 flex items-center justify-between text-[11px] text-neutral-400">
         <div>
-          <span>Crafted with ❤️ for developers by </span>
+          <span>DevTab</span>
+          <span className="mx-2 text-neutral-500">·</span>
+          <span>Crafted by </span>
           <a
             href="https://github.com/Andreyy05"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-neutral-400 hover:text-emerald-400 transition-colors font-medium"
+            className="text-neutral-300 hover:text-white transition-colors"
           >
             Andrej Pavliščak
           </a>
         </div>
-        <div className="flex items-center gap-4">
-          <span>Press <kbd className="px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300 font-mono text-[10px]">?</kbd> for shortcuts</span>
-          <span><kbd className="px-1.5 py-0.5 rounded bg-neutral-900 border border-neutral-800 text-neutral-300 font-mono text-[10px]">S</kbd> for settings</span>
+        <div className="flex items-center gap-3">
+          <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-neutral-300 font-mono text-[10px]">⌘K</kbd> to search</span>
+          <span><kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-neutral-300 font-mono text-[10px]">S</kbd> settings</span>
         </div>
       </footer>
 
