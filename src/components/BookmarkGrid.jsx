@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import BookmarkCard from './BookmarkCard';
 import BookmarkModal from './BookmarkModal';
-import { Plus, LayoutGrid, Bookmark } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 export default function BookmarkGrid({ bookmarks, onSaveBookmark, onDeleteBookmark, accentTheme }) {
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -32,27 +32,16 @@ export default function BookmarkGrid({ bookmarks, onSaveBookmark, onDeleteBookma
   };
 
   return (
-    <section className="w-full max-w-7xl mx-auto my-6 px-4 sm:px-6">
-      {/* Section Header & Category Filters */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-2">
-          <Bookmark className="w-4 h-4 text-emerald-400" />
-          <h2 className="text-sm font-bold uppercase tracking-wider text-neutral-300">
-            Workspaces & Bookmarks
-          </h2>
-          <span className="text-xs px-2 py-0.5 rounded-full bg-neutral-900 border border-neutral-800 text-neutral-400 font-mono">
-            {filteredBookmarks.length}
-          </span>
-        </div>
-
-        {/* Filter Pills + Add Button */}
-        <div className="flex flex-wrap items-center gap-1.5 w-full sm:w-auto">
+    <section className="w-full max-w-6xl mx-auto my-4 px-6">
+      {/* Category Segmented Control & Add Button */}
+      <div className="flex items-center justify-between gap-4 mb-3.5">
+        <div className="flex items-center gap-1 bg-white/[0.04] p-0.5 rounded-xl border border-white/[0.06] backdrop-blur-xl overflow-x-auto max-w-full">
           <button
             onClick={() => setSelectedCategory('All')}
-            className={`px-3 py-1 rounded-xl text-xs font-medium transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs font-medium transition-all ${
               selectedCategory === 'All'
-                ? 'bg-neutral-800 text-white font-semibold shadow-sm'
-                : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
+                ? 'bg-white/[0.12] text-white shadow-sm'
+                : 'text-neutral-400 hover:text-white'
             }`}
           >
             All
@@ -61,47 +50,46 @@ export default function BookmarkGrid({ bookmarks, onSaveBookmark, onDeleteBookma
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1 rounded-xl text-xs font-medium transition-all ${
+              className={`px-3 py-1 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
                 selectedCategory === cat
-                  ? 'bg-neutral-800 text-white font-semibold shadow-sm'
-                  : 'text-neutral-400 hover:text-neutral-200 hover:bg-neutral-900'
+                  ? 'bg-white/[0.12] text-white shadow-sm'
+                  : 'text-neutral-400 hover:text-white'
               }`}
             >
               {cat}
             </button>
           ))}
-
-          <button
-            onClick={handleAddNew}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition-all ml-auto sm:ml-2"
-          >
-            <Plus className="w-3.5 h-3.5" />
-            <span>Add</span>
-          </button>
         </div>
+
+        <button
+          onClick={handleAddNew}
+          className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium bg-white/[0.06] hover:bg-white/[0.1] text-neutral-300 hover:text-white border border-white/[0.08] transition-all shrink-0 active:scale-95"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          <span>New Link</span>
+        </button>
       </div>
 
-      {/* Grid of Bookmarks */}
+      {/* Grid */}
       {filteredBookmarks.length > 0 ? (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2.5">
           {filteredBookmarks.map((bookmark) => (
             <BookmarkCard
               key={bookmark.id}
               bookmark={bookmark}
               onEdit={handleEdit}
               onDelete={onDeleteBookmark}
-              accentTheme={accentTheme}
             />
           ))}
         </div>
       ) : (
-        <div className="py-12 border border-dashed border-neutral-800 rounded-2xl flex flex-col items-center justify-center text-center">
-          <p className="text-sm text-neutral-500">No bookmarks in this category yet.</p>
+        <div className="py-10 border border-white/[0.06] rounded-2xl flex flex-col items-center justify-center text-center">
+          <p className="text-xs text-neutral-500">No bookmarks in this folder.</p>
           <button
             onClick={handleAddNew}
-            className="mt-3 text-xs text-emerald-400 hover:underline flex items-center gap-1"
+            className="mt-2 text-xs text-neutral-400 hover:text-white flex items-center gap-1"
           >
-            <Plus className="w-3.5 h-3.5" /> Add one now
+            <Plus className="w-3.5 h-3.5" /> Add one
           </button>
         </div>
       )}
@@ -115,7 +103,7 @@ export default function BookmarkGrid({ bookmarks, onSaveBookmark, onDeleteBookma
         }}
         onSave={onSaveBookmark}
         editingBookmark={editingBookmark}
-        existingCategories={categories.length > 0 ? categories : ['Daily Dev', 'Reference', 'Tools', 'Cloud']}
+        existingCategories={categories.length > 0 ? categories : ['Favorites', 'Development', 'Cloud', 'Utilities']}
       />
     </section>
   );
