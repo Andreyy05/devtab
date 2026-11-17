@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import SearchBar from './components/SearchBar';
+import BookmarkGrid from './components/BookmarkGrid';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { ACCENT_THEMES, DEFAULT_BOOKMARKS } from './constants/defaults';
 
@@ -12,6 +13,20 @@ export default function App() {
   const [bookmarks, setBookmarks] = useLocalStorage('devtab_bookmarks', DEFAULT_BOOKMARKS);
 
   const accentTheme = ACCENT_THEMES[themeId] || ACCENT_THEMES.emerald;
+
+  const handleSaveBookmark = (bookmark) => {
+    setBookmarks((prev) => {
+      const exists = prev.some((b) => b.id === bookmark.id);
+      if (exists) {
+        return prev.map((b) => (b.id === bookmark.id ? bookmark : b));
+      }
+      return [bookmark, ...prev];
+    });
+  };
+
+  const handleDeleteBookmark = (id) => {
+    setBookmarks((prev) => prev.filter((b) => b.id !== id));
+  };
 
   return (
     <div className="min-h-screen flex flex-col justify-between selection:bg-emerald-500/30">
@@ -28,6 +43,13 @@ export default function App() {
           activeEngineId={searchEngineId}
           onSelectEngine={setSearchEngineId}
           bookmarks={bookmarks}
+          accentTheme={accentTheme}
+        />
+
+        <BookmarkGrid
+          bookmarks={bookmarks}
+          onSaveBookmark={handleSaveBookmark}
+          onDeleteBookmark={handleDeleteBookmark}
           accentTheme={accentTheme}
         />
       </main>
