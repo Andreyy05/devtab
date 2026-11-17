@@ -1,108 +1,151 @@
-# 🚀 DevTab — Developer Startpage
+<div align="center">
 
-> **Ultra-fast, minimalist, and aesthetic new tab startpage crafted for developers.**  
-> Keep your daily GitHub streak alive, access project workspaces instantly, take scratchpad notes, and search across developer engines in milliseconds.
+# 🚀 DevTab
 
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![React](https://img.shields.io/badge/React-19-blue.svg)
-![Vite](https://img.shields.io/badge/Vite-8-purple.svg)
-![TailwindCSS](https://img.shields.io/badge/TailwindCSS-v4-38bdf8.svg)
-![Deploy](https://img.shields.io/badge/Deploy-GitHub%20Pages-black.svg)
+### *Minimalist, Apple-inspired Developer Startpage & New Tab Hub*
+
+A serene, ultra-fast, and keyboard-first browser new tab experience designed for developers.<br/>
+Keep your GitHub streak alive, launch workspaces in milliseconds, and manage daily priorities without distraction.
+
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](LICENSE)
+[![React 19](https://img.shields.io/badge/React-19.3-61dafb.svg?style=flat-square&logo=react)](https://react.dev/)
+[![Vite](https://img.shields.io/badge/Vite-8.3-646CFF.svg?style=flat-square&logo=vite)](https://vite.dev/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38bdf8.svg?style=flat-square&logo=tailwindcss)](https://tailwindcss.com/)
+[![GitHub Pages](https://img.shields.io/badge/Deploy-GitHub_Pages-black.svg?style=flat-square&logo=github)](https://andreyy05.github.io/devtab/)
+
+<br />
+
+<p align="center">
+  <img src="./docs/preview.jpg" alt="DevTab Preview" width="100%" style="border-radius: 18px; box-shadow: 0 20px 40px rgba(0,0,0,0.6);" />
+</p>
+
+</div>
+
+---
+
+## 💡 The Philosophy
+
+Modern browser new tab pages are cluttered with news feeds, clickbait, and heavy dashboards. **DevTab** takes the opposite approach:
+- **Cupertino Restraint**: Clean typography, frosted glass materials (`backdrop-filter`), and deep obsidian canvas without sensory overload.
+- **Zero AI Slop**: No fake inspirational quote feeds or noisy widgets — only real developer tools and live metrics.
+- **100% Local-First & Private**: Your notes, reminders, and links stay in your browser's `localStorage`. No telemetry, no external databases, zero tracking.
+- **Keyboard-Centric**: Built for developers who rarely take their hands off the keyboard.
 
 ---
 
 ## ✨ Features
 
-- ⚡ **Aesthetic Header & Clock**: Real-time digital clock (24h/12h formats), localized date, and dynamic developer greeting.
-- 🔍 **Omni Quick Search**: Switch seamlessly between **Google**, **GitHub**, **DuckDuckGo**, **Stack Overflow**, **MDN Web Docs**, and **Perplexity AI**.
-  - Direct URL auto-detection: type `localhost:3000` or `ray.so` and jump right in!
-  - Press `/` anywhere to immediately focus.
-- 📌 **Categorized Bookmarks & Favicon Resolver**:
-  - Organized by `Daily Dev`, `Reference`, `Tools`, `Cloud`, and custom tags.
-  - Automatic high-resolution favicon resolution with fallback.
-  - Add, edit, and delete bookmarks on the fly.
-- 🐾 **Live GitHub Streak & Activity Rhythm**:
-  - Real-time GitHub public API integration (no API key required).
-  - Current streak counter, today's push count, and 14-day contribution rhythm dots.
-  - Highlights top active repository.
-- 📝 **Scratchpad & Daily Focus Tasks**:
-  - **Scratchpad**: Monospace scratch area for code snippets, JWT tokens, or scratch notes with instant copy & character counter.
-  - **Daily Tasks**: Checkbox list with progress bar and celebratory confetti when you finish your day's work!
-  - Everything auto-saved to `localStorage`.
-- 🎨 **Accent Themes & Preferences**:
-  - 5 developer themes: Emerald, Cyber Cyan, Electric Violet, Neon Amber, Retro Rose.
-  - Full data backup & restore (JSON export/import).
-- ⌨️ **Keyboard First**:
-  - `/` Focus search
-  - `?` Shortcuts cheat sheet
-  - `S` Preferences & Settings
-  - `Esc` Blur / Close dialogs
+### 🔍 Spotlight Omni-Search (`⌘K` or `/`)
+- Instant search across **Google**, **GitHub**, **DuckDuckGo**, **Stack Overflow**, and **MDN Web Docs**.
+- **Direct Address Execution**: Detects URLs and local environments (e.g. `localhost:3000`, `ray.so`, `docs.new`) and opens them immediately.
+- Real-time matching filter across all your saved bookmarks.
+
+### 📌 Launchpad Workspace & Squircles
+- Organize bookmarks into folders: `Favorites`, `Development`, `Cloud`, `Utilities`, or your own custom categories.
+- Automatic high-resolution favicon resolution with graceful fallback.
+- Hover actions to quickly edit URLs or delete outdated links.
+
+### 🐾 Cupertino GitHub Activity Widget
+- Live integration with the public GitHub API for your handle (`@Andreyy05`).
+- Tracks current **consecutive streak days**, **today's pushes**, and **14-day contribution rhythm**.
+- Highlights your top active repository and includes a 1-click manual refresh button with automated rate-limit caching.
+
+### 📝 Apple Reminders & Notes
+- **Reminders**: Minimalist task checklist with satisfying strike-throughs and completion counter.
+- **Notes**: Monospace scratchpad for quick code snippets, terminal commands, or JWT tokens with automatic persistent saving and 1-click clipboard copy.
+
+### 🎨 System Preferences & Backup
+- **5 Apple Accent Themes**: macOS Blue, Graphite, Mint, Purple, and Tangerine.
+- **12h / 24h Clock Formats**: Real-time digital clock with localized date and dynamic greetings.
+- **Full Data Portability**: Export and import your entire configuration (bookmarks, notes, reminders) in a clean JSON format.
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+| :--- | :--- |
+| <kbd>⌘K</kbd> or <kbd>/</kbd> | Focus Spotlight Omni-Search |
+| <kbd>Esc</kbd> | Dismiss search focus / Close modals |
+| <kbd>S</kbd> | Open Preferences |
+| <kbd>?</kbd> | Toggle Keyboard Shortcuts helper |
+| <kbd>Enter</kbd> | Execute search or navigate to URL |
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [React 19](https://react.dev/)
-- **Bundler**: [Vite 8](https://vite.dev/)
-- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Celebration Effects**: [Canvas Confetti](https://www.npmjs.com/package/canvas-confetti)
-- **CI/CD**: GitHub Actions workflow for zero-config GitHub Pages hosting
+| Technology | Purpose |
+| :--- | :--- |
+| **React 19** | Modern UI components and reactive state |
+| **Vite 8** | Ultra-fast build tool and developer server |
+| **Tailwind CSS v4** | Modern utility-first styling with custom frosted glass design tokens |
+| **Lucide Icons** | Crisp, lightweight icons |
+| **GitHub Actions** | Automated CI/CD pipeline for instant GitHub Pages deployment |
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Getting Started
+
+### Prerequisites
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
+- [npm](https://www.npmjs.com/)
 
 ### 1. Clone & Install
-
 ```bash
 git clone https://github.com/Andreyy05/devtab.git
 cd devtab
 npm install
 ```
 
-### 2. Run Locally
-
+### 2. Start Development Server
 ```bash
 npm run dev
 ```
-
-Open your browser at `http://localhost:5173`.
+Open **[http://localhost:5173](http://localhost:5173)** in your browser.
 
 ### 3. Build for Production
-
 ```bash
 npm run build
 ```
+Compiled assets will be generated in `./dist`.
 
 ---
 
-## 🌐 Deploy to GitHub Pages (1-Click)
+## 🧩 Install as Browser New Tab
 
-1. Push this repository to GitHub under your account (`Andreyy05/devtab`).
-2. Go to **Settings** > **Pages** in your repository.
-3. Under **Source**, choose **GitHub Actions**.
-4. Push to `main` — the bundled `.github/workflows/deploy.yml` workflow will automatically build and publish your startpage live!
-
----
-
-## 🧩 Use as Chrome / Edge New Tab
-
-You can use DevTab as your default browser "New Tab" page:
-
-### Method A: Browser Extension (Unpacked)
-1. Run `npm run build` to generate the `/dist` directory.
-2. In Chrome / Edge / Brave, open `chrome://extensions/`.
-3. Enable **Developer mode** (top right toggle).
+### Option A: Load as Chrome / Edge Extension (Unpacked)
+1. Run `npm run build`.
+2. Open your browser and navigate to:
+   - **Chrome**: `chrome://extensions/`
+   - **Edge**: `edge://extensions/`
+   - **Brave**: `brave://extensions/`
+3. Toggle on **Developer mode** in the top right corner.
 4. Click **Load unpacked** and select the `dist` folder.
-5. Every time you open a new tab, DevTab loads instantly!
+5. Every new tab will now open DevTab instantly!
 
-### Method B: Custom New Tab Redirector
-If hosting on GitHub Pages, simply install any lightweight new-tab redirect extension (like *Custom New Tab URL*) and set it to your GitHub Pages URL:
-`https://andreyy05.github.io/devtab/`
+### Option B: Use with GitHub Pages URL
+1. Enable GitHub Pages in your repo (**Settings** > **Pages** > **GitHub Actions**).
+2. Install any lightweight new-tab redirect extension (e.g. *Custom New Tab URL*).
+3. Set the target URL to:
+   ```
+   https://andreyy05.github.io/devtab/
+   ```
+
+---
+
+## 🔒 Privacy & Local-First Architecture
+
+DevTab does not collect any data:
+- No tracking pixels or analytics scripts.
+- No remote user accounts or authentication servers.
+- All bookmarks, notes, reminders, and settings live strictly inside your local browser's `window.localStorage`.
+- The only outbound network requests made are read-only fetches to the public GitHub API (`api.github.com`) to query public commit events.
 
 ---
 
 ## 📄 License
 
-MIT License © 2026 [Andrej Pavliščak](https://github.com/Andreyy05)
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+Developed with ❤️ by [**Andrej Pavliščak**](https://github.com/Andreyy05).
